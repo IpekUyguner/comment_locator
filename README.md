@@ -66,6 +66,10 @@ When hover over the line, it displays the confidence level for the prediction.
 
 ![example](https://user-images.githubusercontent.com/40366759/135456209-e5dd4816-31f6-40f8-8bd9-a577e3f29fcf.png)
 
+### Prerequisites
+The model files from part 1, which are "model.onnx", "word_embeddings.txt", "word_to_indexes.csv", "word.vectors.txt", 
+should be under the config file of the Plugin (comment_locator-main/build/idea-sandbox/config)
+
 ### Limitations
 - As explained in the paper, the recall value is too low for the model (approx. 15%). It means, it cannot find the most comment worthy locations. However,
 precision is higher around 80 %, so if it suggest something, it is more reliable. 
@@ -73,9 +77,15 @@ precision is higher around 80 %, so if it suggest something, it is more reliable
 - It is assumed that the each code chunks seperated by empty lines are coherent itself. So, if developer writes code by putting random epty spaces, the model could not make sense out of it.
 
 
-### Future Work:
+### Future Works
  This is an beginning of studies on this subject. There are many directions to be worth to follow in terms of model improvement as well as the Plugin implementation. For example:
 - The dataset for the training data can be extended to improve results. 
 - The idea can be applied to other languages. However there is no existed dataset for different languages. (Some preliminary analysis done to create such JAVA datasets that can be found under analysis_java_files.ipynb. Java repositories from the link with more than 50 stars  (https://jetbrains.team/p/ccrm/repositories/fl-dataset/files/docs/README.md#download) are investigated.)
 - Further step could be also combine this project with projects related to WHAT TO COMMENT, not only WHERE TO COMMENT.
 
+### Relevant Paper& Works 
+- https://homes.cs.washington.edu/~mernst/pubs/predict-comments-icse2020-abstract.html
+
+- https://dl.acm.org/doi/10.1145/3434280
+
+- https://github.com/SpringHerald/DeepCommenter
