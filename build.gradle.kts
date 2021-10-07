@@ -25,9 +25,32 @@ version = properties("pluginVersion")
 // Configure project's dependencies
 repositories {
     mavenCentral()
+    maven(url = "https://jitpack.io")
+    maven(url = "https://www.jetbrains.com/intellij-repository/releases/")
+    maven(url = "https://cache-redirector.jetbrains.com/intellij-dependencies")
 }
+
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
+    implementation("com.google.api-client:google-api-client:1.23.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.23.0")
+    implementation("com.google.apis:google-api-services-drive:v3-rev110-1.23.0")
+    implementation("net.lingala.zip4j:zip4j:1.3.2")
+    // This dependency is used by the application.
+    implementation ("com.microsoft.onnxruntime:onnxruntime:1.5.2")
+    implementation ("org.jetbrains:annotations:20.1.0")
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    implementation("com.opencsv:opencsv:4.0")
+    implementation ("com.github.cliftonlabs:json-simple:3.1.0")
+    implementation ("org.javatuples:javatuples:1.2")
+    implementation("com.dropbox.core:dropbox-core-sdk:3.1.5")
+    implementation("org.asynchttpclient:async-http-client:2.0.3")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 // Configure gradle-intellij-plugin plugin.
@@ -38,7 +61,6 @@ intellij {
     type.set(properties("platformType"))
     downloadSources.set(properties("platformDownloadSources").toBoolean())
     updateSinceUntilBuild.set(true)
-
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
     plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
 }
@@ -55,14 +77,12 @@ changelog {
 detekt {
     config = files("./detekt-config.yml")
     buildUponDefaultConfig = true
-
     reports {
         html.enabled = false
         xml.enabled = false
         txt.enabled = false
     }
 }
-
 tasks {
     // Set the compatibility versions to 1.8
     withType<JavaCompile> {
@@ -72,11 +92,9 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
-
     withType<Detekt> {
         jvmTarget = "1.8"
     }
-
     patchPluginXml {
         version.set(properties("pluginVersion"))
         sinceBuild.set(properties("pluginSinceBuild"))
@@ -87,22 +105,18 @@ tasks {
             File(projectDir, "README.md").readText().lines().run {
                 val start = "<!-- Plugin description -->"
                 val end = "<!-- Plugin description end -->"
-
                 if (!containsAll(listOf(start, end))) {
                     throw GradleException("Plugin description section not found in README.md:\n$start ... $end")
                 }
                 subList(indexOf(start) + 1, indexOf(end))
             }.joinToString("\n").run { markdownToHTML(this) }
         )
-
         // Get the latest available change notes from the changelog file
         changeNotes.set(provider { changelog.getLatest().toHTML() })
     }
-
     runPluginVerifier {
         ideVersions.set(properties("pluginVerifierIdeVersions").split(',').map(String::trim).filter(String::isNotEmpty))
     }
-
     publishPlugin {
         dependsOn("patchChangelog")
         token.set(System.getenv("PUBLISH_TOKEN"))
@@ -112,3 +126,4 @@ tasks {
         channels.set(listOf(properties("pluginVersion").split('-').getOrElse(1) { "default" }.split('.').first()))
     }
 }
+
