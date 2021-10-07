@@ -93,6 +93,7 @@ For more details regarding Kotlin integration, please see: [Kotlin for Plugin De
 
 ## Plugin template structure
 
+    
 A generated IntelliJ Platform Plugin Template repository contains the following content structure:
 
 ```
